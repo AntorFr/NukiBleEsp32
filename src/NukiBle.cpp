@@ -1029,7 +1029,7 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
         printBuffer((byte*)hmacPayload, sizeof(hmacPayload), false, "Concatenated data r");
         crypto_auth_hmacsha256(authenticator, hmacPayload, sizeof(hmacPayload), secretKeyK);
         printBuffer(authenticator, sizeof(authenticator), false, "HMAC 256 result");
-        //memset(challengeNonceK, 0, sizeof(challengeNonceK));
+        memset(challengeNonceK, 0, sizeof(challengeNonceK));
         nukiPairingResultState = PairingState::SendAuth;
       }
       break;
@@ -1119,7 +1119,9 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
       nukiPairingResultState = PairingState::Timeout;
     }
   }
-
+  
+  vTaskDelay(200);
+  
   #ifndef NUKI_64BIT_TIME
   if (millis() - timeNow > PAIRING_TIMEOUT) {
   #else
@@ -1371,29 +1373,44 @@ void NukiBle::handleReturnMessage(Command returnCode, unsigned char* data, uint1
   switch (returnCode) {
     case Command::RequestData : {
       #ifdef DEBUG_NUKI_COMMUNICATION
-      log_d("requestData");
+      log_d("handleReturnMessage: requestData");
       #endif
       break;
     }
     case Command::PublicKey : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: PublicKey");
+      #endif
       memcpy(remotePublicKey, data, 32);
       printBuffer(remotePublicKey, sizeof(remotePublicKey), false,  "Remote public key");
       break;
     }
     case Command::Challenge : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: Challenge");
+      #endif
       memcpy(challengeNonceK, data, 32);
       printBuffer((byte*)data, dataLen, false, "Challenge");
       break;
     }
     case Command::AuthorizationAuthenticator : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: AuthorizationAuthenticator");
+      #endif
       printBuffer((byte*)data, dataLen, false, "authorizationAuthenticator");
       break;
     }
     case Command::AuthorizationData : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: authorizationData");
+      #endif
       printBuffer((byte*)data, dataLen, false, "authorizationData");
       break;
     }
     case Command::AuthorizationId : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: AuthorizationId");
+      #endif
       unsigned char lockId[16];
       printBuffer((byte*)data, dataLen, false, "authorizationId data");
       memcpy(authorizationId, &data[32], 4);
@@ -1404,6 +1421,9 @@ void NukiBle::handleReturnMessage(Command returnCode, unsigned char* data, uint1
       break;
     }
     case Command::AuthorizationEntry : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: authorizationEntry");
+      #endif
       printBuffer((byte*)data, dataLen, false, "authorizationEntry");
       AuthorizationEntry authEntry;
       memcpy(&authEntry, data, sizeof(authEntry));
@@ -1415,6 +1435,9 @@ void NukiBle::handleReturnMessage(Command returnCode, unsigned char* data, uint1
     }
 
     case Command::Status : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: status");
+      #endif
       printBuffer((byte*)data, dataLen, false, "status");
       receivedStatus = data[0];
       #ifdef DEBUG_NUKI_COMMUNICATION
@@ -1439,14 +1462,23 @@ void NukiBle::handleReturnMessage(Command returnCode, unsigned char* data, uint1
       break;
     }
     case Command::AuthorizationIdConfirmation : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: authorizationIdConfirmation");
+      #endif
       printBuffer((byte*)data, dataLen, false, "authorizationIdConfirmation");
       break;
     }
     case Command::AuthorizationIdInvite : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: authorizationIdInvite");
+      #endif
       printBuffer((byte*)data, dataLen, false, "authorizationIdInvite");
       break;
     }
     case Command::AuthorizationEntryCount : {
+      #ifdef DEBUG_NUKI_COMMUNICATION
+      log_d("handleReturnMessage: authorizationEntryCount");
+      #endif
       printBuffer((byte*)data, dataLen, false, "authorizationEntryCount");
       uint16_t count = 0;
       memcpy(&count, data, 2);
