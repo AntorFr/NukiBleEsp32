@@ -1120,8 +1120,7 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
     }
   }
   
-  log_d("##################### TIMER  #########################");
-  vTaskDelay(800);
+  log_d("##################### END SWITCH  #########################");
   
   #ifndef NUKI_64BIT_TIME
   if (millis() - timeNow > PAIRING_TIMEOUT) {
