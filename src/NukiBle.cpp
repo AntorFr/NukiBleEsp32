@@ -1036,15 +1036,18 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
     }
     case PairingState::SendAuth: {
       #ifdef DEBUG_NUKI_CONNECT
-      log_d("##################### SEND AUTHENTICATOR #########################");
+      log_d("##################### SEND AUTHENTICATOR 1/3 #########################");
       #endif
       sendPlainMessage(Command::AuthorizationAuthenticator, authenticator, sizeof(authenticator));
+      log_d("##################### SEND AUTHENTICATOR 2/3  #########################");
       nukiPairingResultState = PairingState::SendAuthData;
+      log_d("##################### SEND AUTHENTICATOR 3/3  #########################");
     }
     case PairingState::SendAuthData: {
+      log_d("##################### SEND AUTHORIZATION DATA 1/3 #########################");
       if (isCharArrayNotEmpty(challengeNonceK, sizeof(challengeNonceK))) {
         #ifdef DEBUG_NUKI_CONNECT
-        log_d("##################### SEND AUTHORIZATION DATA #########################");
+        log_d("##################### SEND AUTHORIZATION DATA 2/3 #########################");
         #endif
         unsigned char authorizationData[101] = {};
         unsigned char authorizationDataIdType[1] = {(unsigned char)authorizationIdType };
@@ -1078,6 +1081,7 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
         sendPlainMessage(Command::AuthorizationData, authorizationDataMessage, sizeof(authorizationDataMessage));
         nukiPairingResultState = PairingState::SendAuthIdConf;
       }
+      log_d("##################### SEND AUTHORIZATION DATA 3/3 #########################");
       break;
     }
     case PairingState::SendAuthIdConf: {
