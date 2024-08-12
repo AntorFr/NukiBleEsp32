@@ -1029,7 +1029,7 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
         printBuffer((byte*)hmacPayload, sizeof(hmacPayload), false, "Concatenated data r");
         crypto_auth_hmacsha256(authenticator, hmacPayload, sizeof(hmacPayload), secretKeyK);
         printBuffer(authenticator, sizeof(authenticator), false, "HMAC 256 result");
-        memset(challengeNonceK, 0, sizeof(challengeNonceK));
+        //memset(challengeNonceK, 0, sizeof(challengeNonceK));
         nukiPairingResultState = PairingState::SendAuth;
       }
       break;
