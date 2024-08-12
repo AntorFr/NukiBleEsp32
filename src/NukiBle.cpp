@@ -1121,7 +1121,8 @@ PairingState NukiBle::pairStateMachine(const PairingState nukiPairingState) {
   }
   
   log_d("##################### END SWITCH  #########################");
-  
+  esp_task_wdt_reset();
+
   #ifndef NUKI_64BIT_TIME
   if (millis() - timeNow > PAIRING_TIMEOUT) {
   #else
